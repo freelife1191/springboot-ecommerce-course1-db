@@ -1,26 +1,56 @@
 spring:
   application:
     name: springboot-ecommerce-course1-db
-
-  # MySQL ??
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/onion-db
     username: onion-user
     password: onion1!
-  # JPA ??
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
-    # Hibernate ?? (?? ??)
+    # JPA SQL을 로그에 보여줌
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+springdoc:
+  open-api:
+    version: 0.0.1
+    info:
+      title: 대용량 트래픽 처리를 위한 데이터베이스 첫 걸음
+      description: 100만 유저를 견디는 서버 구축 가이드
+      version: 0.0.1
+      contact:
+        name: db
+        email: db@freelife.com
+        url: https://github.com/freelife1191/springboot-ecommerce-course1-db
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /docs
+    deep-linking: true
+    disable-swagger-default-url: true
+    enabled: true
+    persist-authorization: false
+    operations-sorter: method
+    tags-sorter: alpha
+    show-common-extensions: true
+    syntax-highlight:
+      theme: obsidian
+      activated: true
+    show-extensions: true
+    doc-expansion: list
+    groups-order: asc
+  model-and-view-allowed: true
+  show-actuator: false
+  enable-spring-security: true
 
 logging:
   level:
     root: info
     org.springframework.web: INFO
     com.onion: debug
+    org.springdoc: debug

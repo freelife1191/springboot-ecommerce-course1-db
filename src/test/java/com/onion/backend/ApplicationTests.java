@@ -1,4 +1,4 @@
-package com.onion;
+package com.onion.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

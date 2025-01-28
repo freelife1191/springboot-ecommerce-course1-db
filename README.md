@@ -6,6 +6,9 @@
 
 ---
 
+- Swagger UI 접속
+  - http://localhost:8080/swagger-ui.html
+
 ## Part1: 초기 프로젝트 세팅을 위한 MySQL 기본
 
 - [Ch 2. 초기 프로젝트 세팅을 위한 MySQL 기본](./Part1/2.%20초기%20프로젝트%20세팅을%20위한%20MySQL%20기본.md)

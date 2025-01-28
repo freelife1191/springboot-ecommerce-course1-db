@@ -59,4 +59,17 @@ public class JwtUtil {
     public byte[] base64toByte(String base64) {
         return Arrays.toString(Base64.getDecoder().decode(base64)).getBytes();
     }
+
+    /**
+     * 토큰 만료일자
+     * @param token
+     * @return
+     */
+    public Date getExpirationDateFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build().parseSignedClaims(token)
+                .getPayload();
+        return claims.getExpiration();
+    }
 }
