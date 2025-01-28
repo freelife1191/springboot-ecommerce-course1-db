@@ -1,5 +1,6 @@
 package com.onion.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,8 @@ public class Article {
     private User author;
 
     @ManyToOne
+    // 게시글 조회시 게시판 정보는 무시
+    @JsonIgnore
     // 외래키를 생성하지 않는다
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Board board;

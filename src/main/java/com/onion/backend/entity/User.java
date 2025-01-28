@@ -32,6 +32,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    // 유저정보 조회시 이메일은 제외해야 된다
+    @JsonIgnore
     @Column(nullable = false)
     private String email;
 
