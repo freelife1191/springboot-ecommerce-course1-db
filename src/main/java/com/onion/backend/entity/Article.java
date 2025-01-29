@@ -43,6 +43,9 @@ public class Article {
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Board board;
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
     // @CreatedDate 어노테이션을 사용하여 엔티티가 저장될 때마다 생성 시간을 자동으로 설정할 수 있다
     @CreatedDate
     @Column(insertable = true, updatable = false, nullable = false)

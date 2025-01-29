@@ -5,10 +5,12 @@ import com.onion.backend.dto.WriteArticleDto;
 import com.onion.backend.entity.Article;
 import com.onion.backend.entity.Board;
 import com.onion.backend.entity.User;
+import com.onion.backend.exception.ForbiddenException;
 import com.onion.backend.exception.RateLimitException;
 import com.onion.backend.exception.ResourceNotFoundException;
 import com.onion.backend.repository.ArticleRepository;
 import com.onion.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -45,7 +47,10 @@ public class ArticleService {
             // throw new ResourceNotFoundException("board not found");
         }
         if (firstArticle == null) {
-            generateArticle(author.orElseThrow(() -> new ResourceNotFoundException("author not found")));
+            generateArticle(
+                    author.orElseThrow(() -> new ResourceNotFoundException("author not found"))
+                    , board
+            );
             // throw new ResourceNotFoundException("article not found");
         }
         if (!this.isCanWriteArticle()) {
@@ -60,7 +65,7 @@ public class ArticleService {
         return article;
     }
 
-    public Article generateArticle(User author) {
+    public Article generateArticle(User author, Board board) {
         Article article = new Article();
         article.setTitle("자동 생성 타이틀");
         article.setContent("자동 생성 컨텐츠");
@@ -117,6 +122,9 @@ public class ArticleService {
         if (article.isEmpty()) {
             throw new ResourceNotFoundException("article not found");
         }
+        if (article.get().getAuthor() != author.get()) {
+            throw new ForbiddenException("article author different");
+        }
         if (!this.isCanEditArticle()) {
             throw new RateLimitException("article not edited by rate limit");
         }
@@ -130,6 +138,32 @@ public class ArticleService {
         return article.get();
     }
 
+    public boolean deleteArticle(Long boardId, Long articleId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Optional<User> author = userRepository.findByUsername(userDetails.getUsername());
+        Optional<Board> board = boardService.findById(boardId);
+        if (author.isEmpty()) {
+            throw new ResourceNotFoundException("author not found");
+        }
+        if (board.isEmpty()) {
+            throw new ResourceNotFoundException("board not found");
+        }
+        Optional<Article> article = articleRepository.findById(articleId);
+        if (article.isEmpty()) {
+            throw new ResourceNotFoundException("article not found");
+        }
+        if (article.get().getAuthor() != author.get()) {
+            throw new ForbiddenException("article author different");
+        }
+        if (!this.isCanEditArticle()) {
+            throw new RateLimitException("article not edited by rate limit");
+        }
+        article.get().setIsDeleted(true);
+        articleRepository.save(article.get());
+        return true;
+    }
+
     private long count() {
         return articleRepository.count();
     }
@@ -139,7 +173,7 @@ public class ArticleService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Article latestArticle = articleRepository.findLatestArticleByAuthorUsernameOrderByCreatedDate(userDetails.getUsername());
         if (count() < 2) return true;
-        return this.isDifferenceMoreThanFiveMinutes(latestArticle.getCreatedDate());
+        return this.isDifferenceMoreThanFiveSeconds(latestArticle.getCreatedDate());
     }
 
     private boolean isCanEditArticle() {
@@ -147,16 +181,16 @@ public class ArticleService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Article latestArticle = articleRepository.findLatestArticleByAuthorUsernameOrderByUpdatedDate(userDetails.getUsername());
         if (count() < 2) return true;
-        return this.isDifferenceMoreThanFiveMinutes(latestArticle.getUpdatedDate());
+        return this.isDifferenceMoreThanFiveSeconds(latestArticle.getUpdatedDate());
     }
 
-    public boolean isDifferenceMoreThanFiveMinutes(LocalDateTime localDateTime) {
+    private boolean isDifferenceMoreThanFiveSeconds(LocalDateTime localDateTime) {
         LocalDateTime dateAsLocalDateTime = new Date().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
 
         Duration duration = Duration.between(localDateTime, dateAsLocalDateTime);
 
-        return Math.abs(duration.toMinutes()) > 5;
+        return Math.abs(duration.toSeconds()) > 5;
     }
 }
