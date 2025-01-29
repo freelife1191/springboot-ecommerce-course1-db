@@ -25,7 +25,7 @@ public class JwtUtil {
 
     public String generateToken(String username) {
         Date now = new Date();
-        long expirationTime = 60 * 60 * 1000; // 만료시간 60분
+        long expirationTime = 60L * 60L * 24L * 365L * 1000L; // 만료시간 1년
         Date expirationDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()

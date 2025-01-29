@@ -18,4 +18,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c WHERE c.article.id = :articleId AND c.isDeleted = false")
     List<Comment> findByArticleId(@Param("articleId") Long articleId);
+
+    long count();
 }

@@ -14,12 +14,22 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/{boardId}/articles/{articleId}")
+    @PostMapping("/{boardId}/articles/{articleId}/comments")
     public ResponseEntity<Comment> writeComment(
             @Parameter(description = "게시판 아이디", example = "1")
             @PathVariable("boardId") Long boardId,
             @PathVariable("articleId") Long articleId,
             @RequestBody WriteCommentDto writeCommentDto) {
         return ResponseEntity.ok(commentService.writeComment(boardId, articleId, writeCommentDto));
+    }
+
+    @PutMapping("/{boardId}/articles/{articleId}/comments/{commentId}")
+    public ResponseEntity<Comment> writeComment(
+            @Parameter(description = "게시판 아이디", example = "1")
+            @PathVariable("boardId") Long boardId,
+            @PathVariable("articleId") Long articleId,
+            @PathVariable("commentId") Long commentId,
+            @RequestBody WriteCommentDto editCommentDto) {
+        return ResponseEntity.ok(commentService.editComment(boardId, articleId, commentId, editCommentDto));
     }
 }
