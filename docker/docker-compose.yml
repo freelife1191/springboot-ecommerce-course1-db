@@ -17,6 +17,7 @@ services: # 이 항목 밑에 실행하려는 컨테이너 들을 정의 ( 컴�
       TZ: Asia/Seoul
     volumes:
       - db_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql #init.sql 실행을 위한 설정. docker-compose.yml과 init.sql이 같은 루트 경로에 있어야 한다.(경로 수정 가능)
     command: # 명령어 실행
       - --lower_case_table_names=1
       - --character-set-server=utf8mb4

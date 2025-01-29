@@ -1,5 +1,6 @@
 package com.onion.backend.controller;
 
+import com.onion.backend.dto.EditArticleDto;
 import com.onion.backend.dto.WriteArticleDto;
 import com.onion.backend.entity.Article;
 import com.onion.backend.service.ArticleService;
@@ -17,8 +18,11 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/{boardId}/articles")
-    public ResponseEntity<Article> writeArticle(@RequestBody WriteArticleDto writeArticleDto) {
-        return ResponseEntity.ok(articleService.writeArticle(writeArticleDto));
+    public ResponseEntity<Article> writeArticle(
+            @Parameter(description = "게시판 아이디", example = "1")
+            @PathVariable("boardId") Long boardId,
+            @RequestBody WriteArticleDto writeArticleDto) {
+        return ResponseEntity.ok(articleService.writeArticle(boardId, writeArticleDto));
     }
 
     @GetMapping("/{boardId}/articles")
@@ -37,5 +41,15 @@ public class ArticleController {
         }
         // lastId와 firstId가 모두 없으면 최신 게시글 10개를 가져온다
         return ResponseEntity.ok(articleService.firstGetArticle(boardId));
+    }
+
+    @PutMapping("/{boardId}/articles/{articleId}")
+    public ResponseEntity<Article> editArticle(
+            @Parameter(description = "게시판 아이디", example = "1")
+            @PathVariable("boardId") Long boardId,
+            @Parameter(description = "게시글 아이디", example = "1")
+            @PathVariable("articleId") Long articleId,
+            @RequestBody EditArticleDto editArticleDto) {
+        return ResponseEntity.ok(articleService.editArticle(boardId, articleId, editArticleDto));
     }
 }
