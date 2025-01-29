@@ -6,6 +6,22 @@ spring:
     url: jdbc:mysql://localhost:3306/onion-db
     username: onion-user
     password: onion1!
+    # HikariCP 설정
+    hikari:
+      # pool 이름 지증
+      pool-name: HikariCP
+      # 최대 Pool 크기 지정
+      maximum-pool-size: 10
+      # 최소 유휴 연결 수 지정
+      minimum-idle: 5
+      # 유휴 연결이 닫히기 전까지의 시간(ms)
+      idle-timeout: 30000
+      # 연결을 얻기 위해 기다리는 최대 시간(ms)
+      connection-timeout: 20000
+      # 연결의 최대 수명(ms)
+      max-lifetime: 1800000
+      # 연결 테스트에 사용할 쿼리
+      connection-test-query: SELECT 1
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
