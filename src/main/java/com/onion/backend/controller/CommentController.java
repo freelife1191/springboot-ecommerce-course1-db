@@ -32,4 +32,14 @@ public class CommentController {
             @RequestBody WriteCommentDto editCommentDto) {
         return ResponseEntity.ok(commentService.editComment(boardId, articleId, commentId, editCommentDto));
     }
+
+    @DeleteMapping("/{boardId}/articles/{articleId}/comments/{commentId}")
+    public ResponseEntity<String> writeComment(
+            @Parameter(description = "게시판 아이디", example = "1")
+            @PathVariable Long boardId,
+            @PathVariable Long articleId,
+            @PathVariable Long commentId) {
+        commentService.deleteComment(boardId, articleId, commentId);
+        return ResponseEntity.ok("comment is deleted");
+    }
 }
